@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>users</title>
+</head>
+<body>
+    <h1>users lab</h1>
+    <input id="userId" type="number" value="1" min="1" max="10">
+    <button id="loadBtn">load</button>
+    <script>
+        const API = "https://jsonplaceholder.typicode.com";
+        async function fetchUser(id) {
+            try {
+               const response = await fetch(`${API}/users/${id}`);
+                const user = await response.json();
+                console.log(user);
+                if (!user || !user.id) {
+                    throw new Error("users not found");
+                }
+                return user;
+            } catch (error) {
+                throw error;
+            }
+        }
+        async function displayUserAndPosts(userId) {
+            try {
+                const user = await fetchUser(userId);
+                console.log("name:", user.name, "email", user.email);
+                const posts = await fetch(`${API}/posts?userId=${userId}`);
+                const postsData = await posts.json();
+                postsData.forEach(post => {
+                    console.log(post.title);
+                });
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        document.getElementById("loadBtn").addEventListener("click", async () => {
+            const id = document.getElementById("userId").value;
+            await displayUserAndPosts(id);
+        });
+        displayUserAndPosts(1);
+    </script>
+</body>
+</html>
