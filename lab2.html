@@ -1,0 +1,52 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>user</title>
+</head>
+<body>
+    <h1>users lab</h1>
+    <input id="userId" type="number" value="1" min="1" max="10">
+    <button id="loadBtn">load</button>
+    <script>
+        const API = "https://jsonplaceholder.typicode.com";
+        function fetchUser(id) {
+            return new Promise((resolve, reject) => {
+                fetch(`${API}/users/${id}`)
+                    .then(res => res.json())
+                    .then(user => {
+                        if (!user || !user.id) {
+                            reject("users not found");
+                        } else {
+                            console.log(user);
+                            resolve(user);
+                        }
+                    })
+                    .catch(error => reject(error));
+            });
+        };
+        function displayUserAndPosts(userId) {
+            fetchUser(userId)
+                .then(user => {
+                    console.log("name:", user.name, "email", user.email);
+                    fetch(`${API}/posts?userId=${userId}`)
+                        .then(res => res.json())
+                        .then(posts => {
+                            posts.forEach(post => {
+                                console.log(post.title);
+                            });
+                        })
+                        .catch(error => reject(error));
+                })
+                .catch(error => console.log(error));
+        }
+        document.getElementById("loadBtn").addEventListener("click", () => {
+            const id = document.getElementById("userId").value;
+            displayUserAndPosts(id);
+        });
+
+        displayUserAndPosts(1);
+    </script>
+</body>
+</html>
